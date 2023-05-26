@@ -8,7 +8,7 @@ LABEL "com.github.actions.color"="green"
 LABEL version="1.1.0"
 LABEL repository="https://github.com/oxctl/react-deploy-to-s3-action"
 LABEL homepage="https://github.com/oxctl/react-deploy-to-s3-action"
-LABEL maintainer="Jean Lescure <opensource@jeanlescure.io>"
+LABEL maintainer="Matthew Buckett <matthew.buckett@it.ox.ac.uk>"
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
