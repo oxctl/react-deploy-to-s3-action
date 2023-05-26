@@ -53,7 +53,7 @@ aws s3 sync ${source} s3://${AWS_S3_BUCKET}/${DEST_DIR} \
               --no-progress \
               ${ENDPOINT_APPEND} $* \
               --delete \
-&& aws s3 sync ${source}/static s3://${AWS_S3_BUCKET}/${DEST_DIR} \
+&& aws s3 sync ${source}/static s3://${AWS_S3_BUCKET}/${DEST_DIR}/static \
               --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=31536000 \
