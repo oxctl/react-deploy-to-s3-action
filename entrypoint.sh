@@ -60,7 +60,7 @@ aws s3 sync ${source} s3://${AWS_S3_BUCKET}/${DEST_DIR} \
               --exclude index.html --exclude 'static/*' \
               --no-progress \
               ${ENDPOINT_APPEND} $* \
-aws s3 cp ${source}/index.html s3://${AWS_S3_BUCKET}/${DEST_DIR} \
+&& aws s3 cp ${source}/index.html s3://${AWS_S3_BUCKET}/${DEST_DIR} \
               --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=5 \
