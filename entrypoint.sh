@@ -37,33 +37,33 @@ text
 EOF
 
 
-# 
+# The source folder
 source="${SOURCE_DIR:-build}"
 
 #  Sync using our dedicated profile and suppress verbose messages.
 #   - Upload index first.
 #   - Then the other top level files.
 #   - Then the static files.
-sh -c "aws s3 sync ${source}/index.html s3://${AWS_S3_BUCKET}/${DEST_DIR} \
+aws s3 sync ${source}/index.html s3://${AWS_S3_BUCKET}/${DEST_DIR} \
               --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=5 \
               --no-progress \
-              ${ENDPOINT_APPEND} $*" \
-&& sh -c "aws s3 sync ${source} s3://${AWS_S3_BUCKET}/${DEST_DIR} \
+              ${ENDPOINT_APPEND} $* \
+&& aws s3 sync ${source} s3://${AWS_S3_BUCKET}/${DEST_DIR} \
               --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=86400 \
               --exclude index.html --exclude 'static/*' \
               --no-progress \
-              ${ENDPOINT_APPEND} $*" \
-&& sh -c "aws s3 sync ${source}/static s3://${AWS_S3_BUCKET}/${DEST_DIR} \
+              ${ENDPOINT_APPEND} $* \
+&& aws s3 sync ${source}/static s3://${AWS_S3_BUCKET}/${DEST_DIR} \
               --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=31536000 \
               --exclude index.html --exclude 'static/*' \
               --no-progress \
-              ${ENDPOINT_APPEND} $*" \
+              ${ENDPOINT_APPEND} $*
 
 SUCCESS=$?
 
