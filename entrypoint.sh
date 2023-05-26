@@ -36,6 +36,12 @@ ${AWS_REGION}
 text
 EOF
 
+if [ -n "${DEST_DIR}"]; then
+  target=s3://${AWS_S3_BUCKET}/${DEST_DIR}
+else
+  target=s3://${AWS_S3_BUCKET}
+fi
+
 
 # The source folder
 source="${SOURCE_DIR:-build}"
@@ -45,21 +51,21 @@ source="${SOURCE_DIR:-build}"
 #   - Then the other top level files.
 #   - Then the static files.
 
-aws s3 sync ${source} s3://${AWS_S3_BUCKET}/${DEST_DIR} \
+aws s3 sync ${source} ${target} \
               --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=86400 \
               --exclude index.html --exclude 'static/*' \
               --no-progress \
-              ${ENDPOINT_APPEND} $* \
               --delete \
-&& aws s3 sync ${source}/static s3://${AWS_S3_BUCKET}/${DEST_DIR}/static \
+              ${ENDPOINT_APPEND} $* \
+&& aws s3 sync ${source}/static ${target}/static \
               --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=31536000 \
               --no-progress \
               ${ENDPOINT_APPEND} $* \
-&& aws s3 cp ${source}/index.html s3://${AWS_S3_BUCKET}/${DEST_DIR} \
+&& aws s3 cp ${source}/index.html ${target} \
               --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=5 \
