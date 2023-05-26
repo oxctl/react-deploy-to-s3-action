@@ -36,7 +36,7 @@ ${AWS_REGION}
 text
 EOF
 
-if [ -n "${DEST_DIR}"]; then
+if [ -n "${DEST_DIR}" ]; then
   target=s3://${AWS_S3_BUCKET}/${DEST_DIR}
 else
   target=s3://${AWS_S3_BUCKET}
