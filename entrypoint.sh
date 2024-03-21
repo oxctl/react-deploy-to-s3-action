@@ -27,14 +27,8 @@ if [ -n "$AWS_S3_ENDPOINT" ]; then
   ENDPOINT_APPEND="--endpoint-url $AWS_S3_ENDPOINT"
 fi
 
-# Create a dedicated profile for this action to avoid conflicts
-# with past/future actions.
-aws configure --profile react-deploy-to-s3-action <<-EOF > /dev/null 2>&1
-
-
-${AWS_REGION}
-text
-EOF
+# Ensure we are using text output
+export AWS_DEFAULT_OUTPUT=text
 
 if [ -n "${DEST_DIR}" ]; then
   target=s3://${AWS_S3_BUCKET}/${DEST_DIR}
@@ -52,7 +46,6 @@ source="${SOURCE_DIR:-build}"
 #   - Then the static files.
 
 aws s3 sync ${source} ${target} \
-              --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=86400 \
               --exclude index.html --exclude 'static/*' \
@@ -60,30 +53,17 @@ aws s3 sync ${source} ${target} \
               --delete \
               ${ENDPOINT_APPEND} $* \
 && aws s3 sync ${source}/static ${target}/static \
-              --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=31536000 \
               --no-progress \
               ${ENDPOINT_APPEND} $* \
 && aws s3 cp ${source}/index.html ${target} \
-              --profile react-deploy-to-s3-action \
               --metadata-directive REPLACE \
               --cache-control max-age=5 \
               --no-progress \
               ${ENDPOINT_APPEND} $*
 
 SUCCESS=$?
-
-# Clear out credentials after we're done.
-# We need to re-run `aws configure` with bogus input instead of
-# deleting ~/.aws in case there are other credentials living there.
-# https://forums.aws.amazon.com/thread.jspa?threadID=148833
-aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-null
-null
-null
-text
-EOF
 
 if [ $SUCCESS -eq 0 ]
 then
